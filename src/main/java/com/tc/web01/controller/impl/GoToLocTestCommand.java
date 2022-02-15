@@ -13,10 +13,9 @@ import com.tc.web01.controller.Command;
 public class GoToLocTestCommand implements Command {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
 		session.setAttribute("url", "MyController?command=GO_TO_LOCTEST_PAGE");
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/LocTest.jsp");
-		dispatcher.forward(request, response);	
+		dispatcher.forward(request, response);
 	}
 }

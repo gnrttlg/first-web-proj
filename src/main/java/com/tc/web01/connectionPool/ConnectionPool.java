@@ -32,13 +32,21 @@ public final class ConnectionPool {
 	private String password;
 	private int poolSize;
 
-	private static final ConnectionPool instance = new ConnectionPool();
-	
+	private static final ConnectionPool instance;
+
+	static {
+		try {
+			instance = new ConnectionPool();
+		} catch (ConnectionPoolException e) {
+			throw new RuntimeException("ConnectionPoolException", e);
+		}
+	}
+
 	public static ConnectionPool getInstance() {
 		return instance;
 	}
-	
-	private ConnectionPool() {
+
+	private ConnectionPool() throws ConnectionPoolException {
 		DBResourceManager dbResourseManager = DBResourceManager.getInstance();
 		this.driverName = dbResourseManager.getValue(DBParameter.DB_DRIVER);
 		this.url = dbResourseManager.getValue(DBParameter.DB_URL);
@@ -49,41 +57,37 @@ public final class ConnectionPool {
 		} catch (NumberFormatException e) {
 			poolSize = 5;
 		}
-		try {
-			initPoolData();
-		} catch (ConnectionPoolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		initPoolData();
 	}
 
 	public void initPoolData() throws ConnectionPoolException {
 		try {
 			Class.forName(driverName);
-			givenAwayConQueue = new ArrayBlockingQueue<Connection>(poolSize);
-			connectionQueue = new ArrayBlockingQueue<Connection>(poolSize);
+			givenAwayConQueue = new ArrayBlockingQueue<>(poolSize);
+			connectionQueue = new ArrayBlockingQueue<>(poolSize);
 			for (int i = 0; i < poolSize; i++) {
-				Connection connection = DriverManager.getConnection(url+"?useSSL=false&serverTimezone=UTC", user, password);
+				Connection connection = DriverManager.getConnection(
+						url + "?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true", user, password);
 				PooledConnection pooledConnection = new PooledConnection(connection);
 				connectionQueue.add(pooledConnection);
 			}
 		} catch (SQLException e) {
-			throw new ConnectionPoolException("SQLException in  ConnectionPool", e);
+			throw new ConnectionPoolException("SQLException in ConnectionPool", e);
 		} catch (ClassNotFoundException e) {
 			throw new ConnectionPoolException("Can't find database driver class", e);
 		}
 	}
 
-	public void dispose() {
+	public void dispose() throws ConnectionPoolException {
 		clearConnectionQueue();
 	}
 
-	private void clearConnectionQueue() {
+	private void clearConnectionQueue() throws ConnectionPoolException {
 		try {
 			closeConnectionsQueue(givenAwayConQueue);
 			closeConnectionsQueue(connectionQueue);
 		} catch (SQLException e) {
-
+			throw new ConnectionPoolException("Clear Connection Queue error", e);
 		}
 	}
 
@@ -98,19 +102,21 @@ public final class ConnectionPool {
 		return connection;
 	}
 
-	public void closeConnection(Connection con, Statement st, ResultSet rs) {
+	public void closeConnection(Connection con, Statement st, ResultSet rs) throws ConnectionPoolException {
 		try {
 			con.close();
 		} catch (SQLException e) {
-			System.out.println("Connection isn't return to the pool.");
+			throw new ConnectionPoolException("Error on closing connection.", e);
 		}
 		try {
 			rs.close();
 		} catch (SQLException e) {
+			throw new ConnectionPoolException("Error on closing connection.", e);
 		}
 		try {
 			st.close();
 		} catch (SQLException e) {
+			throw new ConnectionPoolException("Error on closing connection.", e);
 		}
 	}
 
@@ -162,7 +168,7 @@ public final class ConnectionPool {
 			if (connection.isReadOnly()) {
 				connection.setReadOnly(false);
 			}
-			System.out.println("givenAwayConQueue size = "+givenAwayConQueue.size());
+			System.out.println("givenAwayConQueue size = " + givenAwayConQueue.size());
 			if (!givenAwayConQueue.remove(this)) {
 				throw new SQLException("Error deleting connection from the given  away connections pool.");
 			}

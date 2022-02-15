@@ -14,11 +14,10 @@ public class GoToAuthorizationPageCommand implements Command {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
 		session.setAttribute("url", "MyController?command=GO_TO_AUTHORIZATION_PAGE");
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/authorization.jsp");
-		dispatcher.forward(request, response);	
+		dispatcher.forward(request, response);
 	}
 
 }

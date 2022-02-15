@@ -14,11 +14,9 @@ public class RestartCommand implements Command {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		HttpSession session=  request.getSession(false);
+		HttpSession session = request.getSession(false);
 		session.invalidate();
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/helloPage.jsp");
-		dispatcher.forward(request, response);	
+		dispatcher.forward(request, response);
 	}
-
 }

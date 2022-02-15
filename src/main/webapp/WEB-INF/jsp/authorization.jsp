@@ -40,7 +40,6 @@
 			${sessionScope.remove("errorMessage")}
 		</h2>
 	</c:if>
-	<c:out value="${sessionScope.errorMessage==null}" />
 
 	<!-- The Modal -->
 	<div id="id01" class="modal">

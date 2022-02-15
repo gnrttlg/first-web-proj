@@ -2,6 +2,7 @@ package com.tc.web01.controller.impl;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,31 +13,22 @@ import com.tc.web01.service.ServiceFactory;
 import com.tc.web01.service.UserService;
 import com.tc.web01.service.exception.ServiceException;
 
-public class AuthorizationCommand implements Command {
+public class GoToUsersPageCommand implements Command {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Authorization");
-		String name;
-		String psw;
-		boolean remember;
-		name = request.getParameter("name");
-		psw = request.getParameter("psw");
-		remember = "on".equals(request.getParameter("remember"));
-
+		HttpSession session = request.getSession(true);
 		ServiceFactory factory = ServiceFactory.getInstance();
 		UserService userService = factory.getUserService();
-		String role;
-		HttpSession session = request.getSession(true);
 		try {
-			role = userService.authorization(name, psw);
-			session.setAttribute("userName", name);
-			session.setAttribute("role", role);
-			session.setAttribute("remember", remember);
-			response.sendRedirect("MyController?command=GO_TO_MAIN_PAGE");
+			session.setAttribute("users", userService.getAllUsers());
+			session.setAttribute("url", "MyController?command=GO_TO_USERS_PAGE");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/users.jsp");
+			dispatcher.forward(request, response);
+
 		} catch (ServiceException e) {
 			session.setAttribute("errorMessage", e.getCause().getMessage());
-			response.sendRedirect("MyController?command=GO_TO_AUTHORIZATION_PAGE");
+			response.sendRedirect("MyController?command=GO_TO_MAIN_PAGE");
 		}
 
 	}
