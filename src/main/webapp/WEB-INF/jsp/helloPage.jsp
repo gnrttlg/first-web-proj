@@ -27,6 +27,7 @@
 <fmt:message bundle="${loc}" key="local.hello_page" var="hello_page" />
 </head>
 <body bgcolor='CCFFCC'>
+<c:out value="${sessionScope.local}" />
 	<div align="left">
 		<a href="MyController?command=switchLocale&local=ru">${ru_button}</a>
 		<a href="MyController?command=switchLocale&local=en">${en_button}</a>

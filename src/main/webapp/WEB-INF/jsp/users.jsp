@@ -6,7 +6,7 @@
 
 <!DOCTYPE html>
 <fmt:setLocale value="${sessionScope.local}" />
-<fmt:setBundle basename="local.loc" var="loc" />
+<fmt:setBundle basename="localization.local" var="loc" />
 <html>
 <head>
 <meta charset="utf-8">
@@ -23,23 +23,29 @@ TD, TH {
 </style>
 </head>
 <body>
+	<div align="left">
+		<a href="MyController?command=switchLocale&local=ru"><fmt:message
+				bundle="${loc}" key="local.locbutton.name.ru" /></a> <a
+			href="MyController?command=switchLocale&local=en"><fmt:message
+				bundle="${loc}" key="local.locbutton.name.en" /></a>
+	</div>
 	<table>
 		<tr>
-			<td>Name</td>
-			<td>Surname</td>
-			<td>Login</td>
-			<td>Address</td>
-			<td>Action</td>
+			<td><fmt:message bundle="${loc}" key="table.name" /></td>
+			<td><fmt:message bundle="${loc}" key="table.surname" /></td>
+			<td><fmt:message bundle="${loc}" key="table.login" /></td>
+			<td><fmt:message bundle="${loc}" key="table.address" /></td>
+			<td><fmt:message bundle="${loc}" key="table.action" /></td>
 		</tr>
 		<c:forEach var="user" items="${users}">
 			<tr>
 				<td><c:out value="${user.name}" /></td>
 				<td><c:out value="${user.surname}" /></td>
 				<td><c:out value="${user.login}" /></td>
-				<td><c:out value="${user.address}"/></td>
+				<td><c:out value="${user.address}" /></td>
 				<td><a
-					href="MyController?command=delete_user&id=<c:out value="${user.id}"/>">Delete</a>
-				</td>
+					href="MyController?command=delete_user&id=<c:out value="${user.id}"/>"><fmt:message
+							bundle="${loc}" key="action.delete" /></a></td>
 			</tr>
 		</c:forEach>
 	</table>
@@ -50,7 +56,8 @@ TD, TH {
 		</h2>
 	</c:if>
 	<h2 align="center">
-		<a href="MyController?command=GO_TO_MAIN_PAGE">Back</a>
+		<a href="MyController?command=GO_TO_MAIN_PAGE"><fmt:message
+				bundle="${loc}" key="back" /></a>
 	</h2>
 </body>
 </html>

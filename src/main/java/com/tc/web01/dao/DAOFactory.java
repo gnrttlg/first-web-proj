@@ -1,6 +1,7 @@
 package com.tc.web01.dao;
 
 import com.tc.web01.dao.impl.SQLGoodDAO;
+import com.tc.web01.dao.impl.SQLStorageDAO;
 import com.tc.web01.dao.impl.SQLUserDAO;
 
 public class DAOFactory {
@@ -8,7 +9,8 @@ public class DAOFactory {
 
 	private final UserDAO userDAO = new SQLUserDAO();
 	private final GoodDAO goodDAO = new SQLGoodDAO();
-
+	private final StorageDAO storageDAO = new SQLStorageDAO();
+	
 	public DAOFactory() {
 	}
 
@@ -23,4 +25,10 @@ public class DAOFactory {
 	public GoodDAO getGoodDAO() {
 		return goodDAO;
 	}
+
+	public StorageDAO getStorageDAO() {
+		return storageDAO;
+	}
+	
+	
 }

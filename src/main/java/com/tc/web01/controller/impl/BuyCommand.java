@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,38 +15,27 @@ import com.tc.web01.service.GoodService;
 import com.tc.web01.service.ServiceFactory;
 import com.tc.web01.service.exception.ServiceException;
 
-public class GoToMainPageCommand implements Command {
+public class BuyCommand implements Command {
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("Buying good");
 		HttpSession session = request.getSession(true);
 		ServiceFactory factory = ServiceFactory.getInstance();
 		GoodService goodService = factory.getGoodService();
-		List<Good> cart;
-		if(session.getAttribute("cart")==null) {
-			cart = new ArrayList<Good>();
-			session.setAttribute("cart", cart);
-		}
-		else
-			cart = (List<Good>) session.getAttribute("cart");
+		List<Good> cart = (List<Good>) session.getAttribute("cart");
 		try {
-			List<Good> goods = goodService.getAllGoods();
 			for (Good good : cart) {
-				for (Good good2 : goods) {
-					if(good.getId()==good2.getId())
-						good2.setInCart(true);
-				}
+				goodService.delete(good.getId());
 			}
-			session.setAttribute("goods", goods);
-			session.setAttribute("url", "MyController?command=GO_TO_MAIN_PAGE");
-			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/mainPage.jsp");
-			dispatcher.forward(request, response);
-
+			session.setAttribute("cart", new ArrayList<Good>());
 		} catch (ServiceException e) {
 			session.setAttribute("errorMessage", e.getCause().getMessage());
-			response.sendRedirect("MyController?command=GO_TO_HELLO_PAGE");
+		} finally {
+			response.sendRedirect("MyController?command=GO_TO_MAIN_PAGE");
 		}
+
 	}
 
 }

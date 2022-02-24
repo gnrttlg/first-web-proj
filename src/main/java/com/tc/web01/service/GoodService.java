@@ -7,4 +7,5 @@ import com.tc.web01.service.exception.ServiceException;
 
 public interface GoodService {
 	List<Good> getAllGoods() throws ServiceException;
+	public void delete(int id) throws ServiceException;
 }

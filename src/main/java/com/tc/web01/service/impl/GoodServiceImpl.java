@@ -27,5 +27,14 @@ public class GoodServiceImpl implements GoodService {
 
 		return goods;
 	}
-
+	
+	public void delete(int id) throws ServiceException {
+		DAOFactory daoFactory = DAOFactory.getInstance();
+		GoodDAO goodDAO = daoFactory.getGoodDAO();
+		try {
+			goodDAO.delete(id);
+		} catch (DAOException e) {
+			throw new ServiceException(e);
+		}
+	}
 }
